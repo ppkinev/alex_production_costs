@@ -177,6 +177,7 @@ function App() {
   const [isPrintable, setIsPrintable] = useState(false)
   const [costItems, setCostItems] = useState(categories)
   const onPrintableToggle = () => setIsPrintable(!isPrintable)
+  const onPrint = () => window.print()
   const onItemAdd = ({ categoryName, item }) => {
     const id = Date.now()
     const currentCategory = costItems[categoryName]
@@ -219,10 +220,17 @@ function App() {
           {summaryTable(costItems)}
           <button
             type="button"
-            className="btn btn-info d-print-none"
+            className="btn btn-secondary d-print-none"
             onClick={onPrintableToggle}
           >
-            Back to editing
+            Редактировать
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary d-print-none"
+            onClick={onPrint}
+          >
+            Распечатать
           </button>
         </div>
       </div>
