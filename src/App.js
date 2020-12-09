@@ -213,7 +213,7 @@ function App() {
       <div>
         <div className="header">
           <div className="container">
-            Antashuk Studio
+            Content First Studio
           </div>
         </div>
         <div className="container mt-4">
@@ -227,7 +227,7 @@ function App() {
           </button>
           <button
             type="button"
-            className="btn btn-primary d-print-none"
+            className="btn btn-primary d-print-none ms-3"
             onClick={onPrint}
           >
             Распечатать
@@ -243,8 +243,10 @@ function App() {
         <div className="header">
           <div className="container">
             <div className="summary">
-              <h4>Суммарно: ${totalCost(costItems).toFixed(2)}</h4>
-              <h6 className="text-primary" onClick={onPrintableToggle}>Show printable</h6>
+              <h4>Итого: ${totalCost(costItems).toFixed(2)}</h4>
+              <button type="button" className="btn btn-sm btn-primary" onClick={onPrintableToggle}>
+                Предпечать
+              </button>
             </div>
           </div>
         </div>
