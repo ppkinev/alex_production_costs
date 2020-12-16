@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
-import services from './items/services'
+import { FaGift } from 'react-icons/fa'
+import services, { addNewItemText } from './items/services'
 import { totalValue, totalCost } from './utils'
 import Printable from './components/Printable'
 
 const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate }) => {
   const { name: categoryName, items } = category
-  const newItemName = '+ Add Item'
   const onItemSelect = ({ target }) => {
-    if (target.value !== newItemName) {
+    if (target.value !== addNewItemText) {
       onItemAdd({ categoryName, item: { name: target.value } })
     }
-    target.value = newItemName
+    target.value = addNewItemText
   }
 
-  const options = [{ name: newItemName }, ...items].map(item => (
+  const options = [{ name: addNewItemText }, ...items].map(item => (
     <option key={item.name.toLowerCase()}>{item.name}</option>
   ))
   const dropdown = (
@@ -23,14 +23,16 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
   )
 
   const forms = costItems.map((ci) => {
-    const { name, unit, canBeStacked, isCalculatedCost } = items.find(item => item.name === ci.name)
-    const { id, quantity, hours, cost } = ci
+    const { name, hasQuantity, hasHours } = items.find(item => item.name === ci.name)
+    const { id, quantity, hours, cost, costFree } = ci
     const onRemove = () => onItemRemove({ categoryName, id })
-    const onUpdate = ({ target: { name, value } }) => onItemUpdate({ 
-      categoryName, ...ci, [name]: value,
-    })
+    const onUpdate = ({ target: { name, value, type, checked } }) => {
+      onItemUpdate({ 
+        categoryName, ...ci, [name]: type !== 'checkbox' ? Number(value) : checked,
+      })
+    }
 
-    const stackInput = canBeStacked ? (
+    const quantityInput = hasQuantity ? (
       <div className="input-group input-group-sm">
         <label className="form-label">Количество (шт)
           <input
@@ -45,7 +47,7 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
         </label>
       </div>
     ) : null
-    const hoursInput = !(isCalculatedCost || unit) ? (
+    const hoursInput = hasHours ? (
       <div className="input-group input-group-sm">
         <label className="form-label">Часы (ч)
           <input
@@ -75,15 +77,30 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
         </label>
       </div>
     )
+    const costFreeCheck = (
+      <div className="input-group form-check">
+        <label className="form-check-label">
+          <FaGift size={24} className={costFree ? 'text-primary' : 'text-secondary'} />
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name="costFree"
+            checked={costFree}
+            onChange={onUpdate}
+          />
+        </label>
+      </div>
+    )
     const totalInput = (
       <div className="input-group input-group-sm">
         <label className="form-label">Итого
           <p className="m-0 form-control bg-success text-white">
-            ${totalValue({ quantity, hours, cost }).toFixed(2)}
+            ${totalValue({ quantity, hours, cost, costFree }).toFixed(2)}
           </p>
         </label>
       </div>
     )
+
     const deleteItem = (
       <div className="input-group input-group-sm">
         <button type="button" className="btn-close" onClick={onRemove}></button>
@@ -96,9 +113,10 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
           <h6 className="card-title">{name}</h6>
 
           <div className="d-flex flex-row justify-content-start align-items-center">
-            {stackInput}
+            {quantityInput}
             {hoursInput}
             {costInput}
+            {costFreeCheck}
             {totalInput}
             {deleteItem}
           </div>
@@ -135,12 +153,12 @@ function App() {
     const currentCategory = costItems[categoryName]
     setCostItems({ ...costItems, [categoryName]: currentCategory.filter(it => it.id !== id) })
   }
-  const onItemUpdate = ({ categoryName, id, quantity, hours, cost }) => {
+  const onItemUpdate = ({ categoryName, id, ...item }) => {
     const currentCategory = costItems[categoryName]
     setCostItems({
       ...costItems,
       [categoryName]: currentCategory.map(it => it.id === id
-        ? { ...it, quantity, hours, cost } : it
+        ? { ...it, ...item } : it
       ),
     })
   }

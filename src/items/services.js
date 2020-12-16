@@ -1,30 +1,40 @@
+/**
+ * items: [] contains one or more objects:
+ * {
+      name,         -> string, service name, appears in dropdown and report, required
+      hasQuantity,  -> boolean, adds quantity input field and number to report
+      hasHours,     -> boolean, adds hours input field and number to report
+      defaultCost,  -> number, default cost for this service
+    }
+ */
+
 const common = {
   name: 'Общие',
   items: [
     {
       name: 'Светильники',
-      canBeStacked: true,
+      hasQuantity: true,
+      hasHours: true,
       defaultCost: 3,
     },
     {
       name: 'Локейшн скаутинг',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
       name: 'Блокинг - перестановка, композиция',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
       name: 'Логистика',
-      isCalculatedCost: true,
     },
     {
       name: 'Экспедиция',
-      isCalculatedCost: true,
     },
     {
       name: 'Доп. расходы',
-      isCalculatedCost: true,
     }
   ]
 }
@@ -34,28 +44,35 @@ const video = {
   items: [
     {
       name: 'Камеры',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
-      name: 'Бэкстейдж'
+      name: 'Бэкстейдж',
+      hasHours: true,
     },
     {
       name: 'Рации',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
       name: 'Слайдер',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
       name: 'Гимбал',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
-      name: 'Репитиция'
+      name: 'Репитиция',
+      hasHours: true,
     },
     {
-      name: 'Оператор'
+      name: 'Оператор',
+      hasHours: true,
     },
   ]
 }
@@ -65,20 +82,25 @@ const audio = {
   items: [
     {
       name: 'Петлички',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
       name: 'Boom mics or other',
-      canBeStacked: true
+      hasQuantity: true,
+      hasHours: true,
     },
     {
-      name: 'Озвучивание'
+      name: 'Озвучивание',
+      hasHours: true,
     },
     {
-      name: 'Звукорежиссер'
+      name: 'Звукорежиссер',
+      hasHours: true,
     },
     {
-      name: 'Чистка звука'
+      name: 'Чистка звука',
+      hasHours: true,
     },
   ]
 }
@@ -87,19 +109,24 @@ const editing = {
   name: 'Монтаж',
   items: [
     {
-      name: 'Титры'
+      name: 'Титры',
+      hasHours: true,
     },
     {
-      name: 'Моушн Графикс'
+      name: 'Моушн Графикс',
+      hasHours: true,
     },
     {
-      name: 'Сведение мультикамер'
+      name: 'Сведение мультикамер',
+      hasHours: true,
     },
     {
-      name: 'Кеинг'
+      name: 'Кеинг',
+      hasHours: true,
     },
     {
-      name: 'Монтажер'
+      name: 'Монтажер',
+      hasHours: true,
     },
   ]
 }
@@ -108,7 +135,8 @@ const drone = {
   name: 'Аэросъемка',
   items: [
     {
-      name: 'Пилот'
+      name: 'Пилот',
+      hasHours: true,
     },
   ]
 }
@@ -118,22 +146,27 @@ const stream = {
   items: [
     {
       name: 'Рестрим',
-      unit: 'шт'
+      hasHours: true,
     },
     {
-      name: 'Стилизация - титры, рамки'
+      name: 'Стилизация - титры, рамки',
+      hasHours: true,
     },
     {
-      name: 'Беспроводной стрим'
+      name: 'Беспроводной стрим',
+      hasHours: true,
     },
     {
-      name: 'Тест'
+      name: 'Тест',
+      hasHours: true,
     },
     {
-      name: 'Техник'
+      name: 'Техник',
+      hasHours: true,
     },
     {
-      name: 'Оператор прямого эфира'
+      name: 'Оператор прямого эфира',
+      hasHours: true,
     },
   ]
 }
@@ -143,16 +176,21 @@ const bridge = {
   items: [
     {
       name: 'Количество участников',
-      unit: 'шт',
+      hasHours: true,
     }
   ]
 }
 
 const studio = {
-  name: 'Аренда студии',
+  name: 'Студия',
   items: [
     {
-      name: 'Хромакей'
+      name: 'Аренда студии',
+      hasHours: true,
+    },
+    {
+      name: 'Хромакей',
+      hasHours: true,
     }
   ]
 }
@@ -161,12 +199,14 @@ const photo = {
   name: 'Фотосъемка',
   items: [
     {
-      name: 'Фотограф'
+      name: 'Фотограф',
+      hasHours: true,
     }
   ]
 }
 
 const services = [common, video, audio, editing, drone, stream, bridge, studio, photo]
 
-export const defaultUnit = 'ч'
+export const addNewItemText = '+ Добавить'
+
 export default services

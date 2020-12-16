@@ -1,3 +1,4 @@
+import { FaGift } from 'react-icons/fa'
 import services from '../items/services'
 import { totalValue, totalCost } from '../utils'
 
@@ -11,14 +12,17 @@ const summaryTable = (costItems) => {
     )
     const items = serviceList.map(s => {
       const currentService = services.find(s => s.name === categoryName)
-      const { unit, canBeStacked, isCalculatedCost } = currentService.items.find(service => service.name === s.name)
+      const { hasHours, hasQuantity } = currentService.items.find(service => service.name === s.name)
       return (
         <tr key={s.id}>
           <td>{s.name}</td>
-          <td>{canBeStacked ? s.quantity : ''}</td>
-          <td>{!(isCalculatedCost || unit) ? s.hours : ''}</td>
-          <td>{s.cost}</td>
-          <td>${totalValue({ quantity: s.quantity, hours: s.hours, cost: s.cost }).toFixed(2)}</td>
+          <td className="text-end">{hasQuantity ? s.quantity : ''}</td>
+          <td className="text-end">{hasHours ? s.hours : ''}</td>
+          <td className="text-end">${s.cost.toFixed(2)}</td>
+          <td className={`text-end ${s.costFree ? 'text-primary' : ''}`}>
+            {s.costFree ? <FaGift size={24} className="me-2" /> : null}
+            ${totalValue({ quantity: s.quantity, hours: s.hours, cost: s.cost, costFree: s.costFree }).toFixed(2)}
+          </td>
         </tr>
       )
     })
@@ -27,10 +31,10 @@ const summaryTable = (costItems) => {
   const headers = (
     <tr key="headers">
       <td>Наименование</td>
-      <td>Кол-во (шт)</td>
-      <td>Часы</td>
-      <td>Цена</td>
-      <td>Стоимость</td>
+      <td className="text-end">Кол-во (шт)</td>
+      <td className="text-end">Часы</td>
+      <td className="text-end">Цена</td>
+      <td className="text-end">Стоимость</td>
     </tr>
   )
   const summary = (
