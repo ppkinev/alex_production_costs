@@ -6,8 +6,8 @@ const summaryTable = (costItems, currency) => {
   const selectedItems = Object.entries(costItems).filter(([, serviceList]) => serviceList.length)
   const rows = selectedItems.map(([categoryName, serviceList]) => {
     const subHeader = (
-      <tr key={categoryName} className="bg-light fw-bold">
-        <td colSpan={5}>{categoryName}</td>
+      <tr key={categoryName} className="fw-bold">
+        <td colSpan={5} className="bg-light">{categoryName}</td>
       </tr>
     )
     const items = serviceList.map(s => {
@@ -46,7 +46,7 @@ const summaryTable = (costItems, currency) => {
   )
 
   return (
-    <table className="table table-bordered">
+    <table className="table table-bordered bg-white">
       <thead />
       <tbody>
         {[headers, ...rows, summary]}
