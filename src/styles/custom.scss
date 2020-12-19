@@ -1,5 +1,9 @@
 @import '~bootstrap/scss/bootstrap.scss';
 
+html, body {
+  background-color: $light;
+}
+
 .d-flex {
   .input-group {
     width: auto;

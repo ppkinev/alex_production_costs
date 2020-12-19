@@ -2,7 +2,7 @@ import { FaGift } from 'react-icons/fa'
 import services from '../items/services'
 import { totalValue, totalCost } from '../utils'
 
-const summaryTable = (costItems) => {
+const summaryTable = (costItems, currency) => {
   const selectedItems = Object.entries(costItems).filter(([, serviceList]) => serviceList.length)
   const rows = selectedItems.map(([categoryName, serviceList]) => {
     const subHeader = (
@@ -18,10 +18,12 @@ const summaryTable = (costItems) => {
           <td>{s.name}</td>
           <td className="text-end">{hasQuantity ? s.quantity : ''}</td>
           <td className="text-end">{hasHours ? s.hours : ''}</td>
-          <td className="text-end">${s.cost.toFixed(2)}</td>
+          <td className="text-end">{s.cost.toFixed(2)} ({currency})</td>
           <td className={`text-end ${s.costFree ? 'text-primary' : ''}`}>
             {s.costFree ? <FaGift size={24} className="me-2" /> : null}
-            ${totalValue({ quantity: s.quantity, hours: s.hours, cost: s.cost, costFree: s.costFree }).toFixed(2)}
+            {totalValue({ quantity: s.quantity, hours: s.hours, cost: s.cost, costFree: s.costFree }).toFixed(2)}
+            {' '}
+            ({currency})
           </td>
         </tr>
       )
@@ -39,7 +41,7 @@ const summaryTable = (costItems) => {
   )
   const summary = (
     <tr key="summary" className="bg-light fw-bold">
-      <td colSpan={5} className="text-end">Суммарно: ${totalCost(costItems).toFixed(2)}</td>
+      <td colSpan={5} className="text-end">Суммарно: {totalCost(costItems).toFixed(2)} ({currency})</td>
     </tr>
   )
 
@@ -54,7 +56,7 @@ const summaryTable = (costItems) => {
 }
 
 const Printable = (props) => {
-  const { costItems, onPrintableToggle } = props
+  const { costItems, onPrintableToggle, currency } = props
   const onPrint = () => window.print()
 
   return (
@@ -65,7 +67,7 @@ const Printable = (props) => {
         </div>
       </div>
       <div className="container mt-4">
-        {summaryTable(costItems)}
+        {summaryTable(costItems, currency)}
         <button
           type="button"
           className="btn btn-secondary d-print-none"

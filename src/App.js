@@ -4,7 +4,7 @@ import services, { addNewItemText } from './items/services'
 import { totalValue, totalCost } from './utils'
 import Printable from './components/Printable'
 
-const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate }) => {
+const section = ({ currency, category, costItems, onItemAdd, onItemRemove, onItemUpdate }) => {
   const { name: categoryName, items } = category
   const onItemSelect = ({ target }) => {
     if (target.value !== addNewItemText) {
@@ -64,7 +64,7 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
     ) : null
     const costInput = (
       <div className="input-group input-group-sm">
-        <label className="form-label">Стоимость ($)
+        <label className="form-label">Стоимость ({currency})
           <input
             className="form-control"
             type="number"
@@ -85,7 +85,7 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
             className="form-check-input"
             type="checkbox"
             name="costFree"
-            checked={costFree}
+            defaultChecked={false}
             onChange={onUpdate}
           />
         </label>
@@ -95,7 +95,7 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
       <div className="input-group input-group-sm">
         <label className="form-label">Итого
           <p className="m-0 form-control bg-success text-white">
-            ${totalValue({ quantity, hours, cost, costFree }).toFixed(2)}
+            {totalValue({ quantity, hours, cost, costFree }).toFixed(2)} ({currency})
           </p>
         </label>
       </div>
@@ -136,8 +136,77 @@ const section = ({ category, costItems, onItemAdd, onItemRemove, onItemUpdate })
   )
 }
 
+const covertCost = (costItems, rate) => {
+  const items = {}
+  Object.entries(costItems).forEach(([categoryName, services]) => {
+    items[categoryName] = []
+    services.forEach(s => items[categoryName].push({ ...s, cost: Number((rate * s.cost).toFixed(2)) }))
+  })
+
+  return items
+}
+
+const CurrencyConverter = (props) => {
+  const { setCostItems, setCurrency, rateState, backRateState } = props
+  const [rate, setRate] = rateState
+  const [backRate, setBackRate] = backRateState
+
+  const onRateUpdate = ({ target: { value } }) => {
+    if (value === '') setRate('')
+    else setRate(Number(value))
+  }
+  const onCalculate = () => {
+    setCurrency('грн')
+    setCostItems(costItems => covertCost(costItems, rate))
+    setBackRate(1 / rate)
+  }
+  const onCalculateBack = () => {
+    setCurrency('$')
+    setCostItems(costItems => covertCost(costItems, backRate))
+    setBackRate(null)
+  }
+
+  return (
+    <div>
+      <div className="input-group input-group-sm">
+        <label className="form-label">Курс грн.
+          <input
+            className="form-control"
+            type="number"
+            step="0.01"
+            min="0"
+            name="rate"
+            value={rate}
+            onChange={onRateUpdate}
+            disabled={backRate}
+          />
+        </label>
+      </div>
+      <button 
+        type="button" 
+        onClick={onCalculate} 
+        className="btn btn-sm btn-secondary"
+        disabled={backRate}
+      >
+        В грн.
+      </button>
+      <button 
+        type="button" 
+        onClick={onCalculateBack} 
+        className="btn btn-sm btn-secondary ms-2"
+        disabled={!backRate}
+      >
+        В $
+      </button>
+    </div>
+  )
+}
+
 function App() {
   const categories = services.reduce((acc, item) => (acc[item.name] = [], acc), {})
+  const [currency, setCurrency] = useState('$')
+  const rateState = useState(1)
+  const backRateState = useState(null)
   const [isPrintable, setIsPrintable] = useState(false)
   const [costItems, setCostItems] = useState(categories)
   const onPrintableToggle = () => setIsPrintable(!isPrintable)
@@ -163,7 +232,8 @@ function App() {
     })
   }
 
-  const sections = services.map(category => section({ 
+  const sections = services.map(category => section({
+    currency,
     category,
     costItems: costItems[category.name],
     onItemAdd,
@@ -172,19 +242,27 @@ function App() {
   }))
 
   if (isPrintable) {
-    return <Printable costItems={costItems} onPrintableToggle={onPrintableToggle} />
+    return <Printable currency={currency} costItems={costItems} onPrintableToggle={onPrintableToggle} />
   }
 
   return (
-    <main className="bg-light">
+    <main>
       <header className="sticky-top">
         <div className="header">
           <div className="container">
-            <div className="summary">
-              <h4>Итого: ${totalCost(costItems).toFixed(2)}</h4>
-              <button type="button" className="btn btn-sm btn-primary" onClick={onPrintableToggle}>
-                Предпечать
-              </button>
+            <div className="d-flex align-items-center justify-content-between">
+              <CurrencyConverter
+                setCostItems={setCostItems}
+                setCurrency={setCurrency}
+                rateState={rateState}
+                backRateState={backRateState}
+              />
+              <div className="summary">
+                <h4>Итого: {totalCost(costItems).toFixed(2)} ({currency})</h4>
+                <button type="button" className="btn btn-sm btn-primary" onClick={onPrintableToggle}>
+                  Предпечать
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -197,4 +275,4 @@ function App() {
   )
 }
 
-export default App;
+export default App
